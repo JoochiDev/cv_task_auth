@@ -1,10 +1,10 @@
 import { conexion } from "../db/conexion.js";
 
 export class taskModel {
-  static async getAll() {
+  static async getAll({ user_id }) {
     try {
-      const query = "SELECT * FROM tasks";
-      const [result] = await conexion.query(query);
+      const query = "SELECT * FROM tasks WHERE user_id = ?";
+      const [result] = await conexion.query(query, [user_id]);
       if (result.length === 0) throw new Error("No hay datos");
       return {
         success: true,
@@ -18,10 +18,10 @@ export class taskModel {
     }
   }
 
-  static async getById({ id }) {
+  static async getById({ id, user_id }) {
     try {
-      const query = "SELECT * FROM tasks WHERE id = ?";
-      const [result] = await conexion.query(query, [id]);
+      const query = "SELECT * FROM tasks WHERE id = ? AND  user_id = ?";
+      const [result] = await conexion.query(query, [id, user_id]);
       if (result.length === 0) throw new Error("No existe la tarea");
 
       return {

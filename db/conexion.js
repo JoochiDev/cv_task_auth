@@ -18,17 +18,3 @@ const config = {
 };
 
 export const conexion = await mysql.createConnection(config);
-
-const url =
-  "mysql://root:cSHuCbgZUmVmsDNtSrWcFrLIibBBFWNM@junction.proxy.rlwy.net:47211/railway";
-// export const conexion = await mysql.createConnection(config);
-/*export async function getConnection() {
-  let connection;
-  try {
-    connection = await mysql.createConnection(config);
-  } catch (error) {
-    console.error("Error al conectar a la base de datos:", error.message);
-    connection = null; // O lanzar el error si prefieres que se maneje en otro lugar
-  }
-  return connection;
-}*/

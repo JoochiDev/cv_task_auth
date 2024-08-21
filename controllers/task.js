@@ -5,7 +5,7 @@ export class TaskController {
   static async getAll(req, res) {
     const { user } = req.session;
     try {
-      const resultado = await taskModel.getAll();
+      const resultado = await taskModel.getAll({ user_id: user.user_id });
       if (!resultado.success)
         return res.status(400).json({ message: resultado.error });
 
@@ -17,7 +17,9 @@ export class TaskController {
 
   static async getById(req, res) {
     const { id } = req.params;
-    const resultado = await taskModel.getById({ id });
+    const user_id = req.session.user.user_id;
+
+    const resultado = await taskModel.getById({ id, user_id });
 
     if (!resultado.success) res.status(400).json({ message: resultado.error });
 
