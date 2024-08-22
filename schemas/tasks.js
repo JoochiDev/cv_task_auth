@@ -1,17 +1,33 @@
 import z from "zod";
 
 const tasksSchema = z.object({
-  title: z.string({
-    invalid_type_error: "Task title must be a string",
-    required_error: "Task is required",
-  }),
-  description: z.string({
-    invalid_type_error: "Task description must be a string",
-    required_error: "Task description is required",
-  }),
-  status: z.string({
-    invalid_type_error: "Task status must be a string",
-    required_error: "Task status is required",
+  title: z
+    .string({
+      invalid_type_error: "El título de la tarea debe ser una cadena de texto",
+      required_error: "El título de la tarea es requerido",
+    })
+    .regex(/^[a-zA-Z0-9]+$/, {
+      message: "El título de la tarea no debe contener caracteres especiales",
+    })
+    .min(4, {
+      message: "El titulo de la tarea debe tener al menos 4 caracteres",
+    })
+    .max(30, {
+      message: "El titulo de la tarea debe tener como máximo 30 caracteres",
+    }),
+  description: z
+    .string({
+      invalid_type_error: "Task description must be a string",
+      required_error: "Task description is required",
+    })
+    .min(8, {
+      message: "La descripción de la tarea debe tener al menos 8 caracteres",
+    }),
+  status: z.enum(["pendiente", "proceso", "terminado"], {
+    errorMap: () => ({
+      message:
+        "Estado de tarea inválido,  usar (pendiente, proceso, terminado)",
+    }), // Mensaje de error personalizado
   }),
 });
 

@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import { conexion } from "../db/conexion.js";
+import { SALT_ROUNDS } from "../utilidades/config.js";
 export class userModel {
   static async login({ input }) {
     try {
@@ -41,7 +42,7 @@ export class userModel {
       }
 
       const id = uuidv4();
-      const passwordHash = await bcrypt.hash(input.password_hash, 10);
+      const passwordHash = await bcrypt.hash(input.password_hash, SALT_ROUNDS);
       const query =
         "INSERT INTO `users`(`id`, `username`, password_hash) VALUES (?,?,?)";
       const [resultado] = await conexion.query(query, [
@@ -54,13 +55,13 @@ export class userModel {
         throw new Error("Error al crear Usuario");
 
       const [usuarioCreado] = await conexion.query(
-        "SELECT * FROM users WHERE id = ?",
+        "SELECT id,username,created_at FROM users WHERE id = ?",
         [id]
       );
       return {
         success: true,
         message: "Usuario creado correctamente",
-        data: usuarioCreado,
+        data: usuarioCreado[0],
       };
     } catch (error) {
       return {

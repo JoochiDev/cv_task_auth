@@ -6,11 +6,10 @@ import { SECRET_JWT_KEY } from "../utilidades/config.js";
 export class userController {
   static async login(req, res) {
     const resultUser = validateUser(req.body);
-
-    if (resultUser.error)
-      return res
-        .status(400)
-        .json({ message: JSON.parse(resultUser.error.message) });
+    if (!resultUser.success) {
+      const errorCapture = resultUser.error.issues[0].message;
+      return res.status(400).json({ message: errorCapture });
+    }
 
     const resultado = await userModel.login({ input: resultUser.data });
 
@@ -26,20 +25,21 @@ export class userController {
       .cookie("access_token", token, {
         maxAge: 1000 * 60 * 60,
       })
-      .json({ token: token, message: resultado.message });
+      .json({ message: resultado.message, token: token });
   }
 
   static async register(req, res) {
     const resultUser = validateUser(req.body);
-    if (resultUser.error) {
-      return res
-        .status(400)
-        .json({ message: JSON.parse(resultUser.error.message) });
+    if (!resultUser.success) {
+      const errorCapture = resultUser.error.issues[0].message;
+      return res.status(400).json({ message: errorCapture });
     }
 
     const resultado = await userModel.createUser({ input: resultUser.data });
     if (!resultado.success) res.status(400).json({ message: resultado.error });
-    return res.status(201).json(resultado.data);
+    return res
+      .status(201)
+      .json({ message: resultado.message, data: resultado.data });
   }
 
   static async logout(req, res) {

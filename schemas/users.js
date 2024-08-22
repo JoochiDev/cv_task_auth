@@ -5,6 +5,9 @@ const usersSchema = z.object({
     .string({
       required_error: "Nombre de usuario requerido",
     })
+    .regex(/^[a-zA-Z0-9]+$/, {
+      message: "El nombre de usuario no debe contener catacteres especiales",
+    })
     .min(4, {
       message: "El nombre de usuario debe tener al menos 4 caracteres",
     }),

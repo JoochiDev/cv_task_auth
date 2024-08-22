@@ -9,7 +9,7 @@ export class TaskController {
       if (!resultado.success)
         return res.status(400).json({ message: resultado.error });
 
-      return res.json({ data: resultado.data, user: user.username });
+      return res.json({ data: resultado.data });
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
@@ -29,17 +29,18 @@ export class TaskController {
   static async create(req, res) {
     const user_id = req.session.user.user_id;
     const resultValidate = validateTask(req.body);
-    if (resultValidate.error) {
-      return res.status(400).json({
-        message: JSON.parse(resultValidate.error.message),
-      });
+    if (!resultValidate.success) {
+      const errorCapture = resultValidate.error.issues[0].message;
+      return res.status(400).json({ message: errorCapture });
     }
     const resultado = await taskModel.create({
       user_id,
       input: resultValidate.data,
     });
     if (!resultado.success) res.status(400).json({ message: resultado.error });
-    res.status(201).json(resultado.data);
+    res
+      .status(201)
+      .json({ message: "Tarea creada correctamente", data: resultado.data });
   }
 
   static async delete(req, res) {
@@ -58,7 +59,8 @@ export class TaskController {
     const result = validateParseTask(req.body);
 
     if (!result.success) {
-      return res.status(400).json({ error: JSON.parse(result.error.message) });
+      const errorCapture = result.error.issues[0].message;
+      return res.status(400).json({ message: errorCapture });
     }
 
     const { id } = req.params;
