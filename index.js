@@ -10,8 +10,8 @@ app.use(json());
 app.use(cors());
 app.use(cookieParser());
 
-app.use("/tasks", authUser, taskRouter);
-app.use("/users", userRouter);
+app.use("/api/tasks", authUser, taskRouter);
+app.use("/api/users", userRouter);
 
 const PORT = process.env.PORT ?? 1234;
 app.listen(PORT, () => {
