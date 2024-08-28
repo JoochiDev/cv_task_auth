@@ -9,10 +9,11 @@ app.disable("x-power-by");
 app.use(json());
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Permitir cualquier origen
-      callback(null, true);
-    },
+    origin: "http://localhost:5173",
+    // origin: (origin, callback) => {
+    //   // Permitir cualquier origen
+    //   callback(null, true);
+    // },
     credentials: true, // Permite el envío de cookies y credenciales
   })
 );
