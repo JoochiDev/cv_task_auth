@@ -28,10 +28,10 @@ export class userController {
     );
     return res
       .cookie("access_token", token, {
-        httpOnly: false,
+        httpOnly: true,
         maxAge: 1000 * 60 * 60,
-        sameSite: "Lax",
-        secure: false,
+        sameSite: "None",
+        secure: true,
       })
       .json({
         message: resultado.message,
