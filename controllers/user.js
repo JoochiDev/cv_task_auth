@@ -30,7 +30,7 @@ export class userController {
       .cookie("access_token", token, {
         httpOnly: false,
         maxAge: 1000 * 60 * 60,
-        sameSite: "None",
+        sameSite: "Lax",
         secure: false,
       })
       .json({
