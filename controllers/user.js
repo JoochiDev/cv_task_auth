@@ -7,14 +7,19 @@ export class userController {
   static async login(req, res) {
     const resultUser = validateUser(req.body);
     if (!resultUser.success) {
-      const errorCapture = resultUser.error.issues[0].message;
-      return res.status(400).json({ message: errorCapture });
+      const errorCapture = resultUser.error.issues[0];
+      return res.status(400).json({
+        message: errorCapture.message,
+        inputError: errorCapture.path[0],
+      });
     }
 
     const resultado = await userModel.login({ input: resultUser.data });
 
     if (!resultado.success)
-      return res.status(400).json({ message: resultado.message });
+      return res
+        .status(401)
+        .json({ message: resultado.message, inputError: resultado.type_error });
 
     const token = jwt.sign(
       { user_id: resultado.data.id, username: resultado.data.username },
@@ -23,20 +28,31 @@ export class userController {
     );
     return res
       .cookie("access_token", token, {
+        httpOnly: false,
         maxAge: 1000 * 60 * 60,
       })
-      .json({ message: resultado.message, token: token });
+      .json({
+        message: resultado.message,
+        token: token,
+        usuario: resultado.data.username,
+      });
   }
 
   static async register(req, res) {
     const resultUser = validateUser(req.body);
     if (!resultUser.success) {
-      const errorCapture = resultUser.error.issues[0].message;
-      return res.status(400).json({ message: errorCapture });
+      const errorCapture = resultUser.error.issues[0];
+      return res.status(400).json({
+        message: errorCapture.message,
+        inputError: errorCapture.path[0],
+      });
     }
 
     const resultado = await userModel.createUser({ input: resultUser.data });
-    if (!resultado.success) res.status(400).json({ message: resultado.error });
+    if (!resultado.success)
+      return res
+        .status(400)
+        .json({ message: resultado.error, inputError: resultado.type_error });
     return res
       .status(201)
       .json({ message: resultado.message, data: resultado.data });

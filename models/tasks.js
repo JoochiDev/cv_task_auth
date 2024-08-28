@@ -5,7 +5,13 @@ export class taskModel {
     try {
       const query = "SELECT * FROM tasks WHERE user_id = ?";
       const [result] = await conexion.query(query, [user_id]);
-      if (result.length === 0) throw new Error("No hay datos");
+      if (result.length === 0) {
+        return {
+          success: true,
+          data: [],
+        };
+      }
+
       return {
         success: true,
         data: result,

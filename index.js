@@ -7,7 +7,15 @@ const app = express();
 
 app.disable("x-power-by");
 app.use(json());
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Permitir cualquier origen
+      callback(null, true);
+    },
+    credentials: true, // Permite el envío de cookies y credenciales
+  })
+);
 app.use(cookieParser());
 
 app.use("/api/tasks", authUser, taskRouter);

@@ -2,6 +2,12 @@ import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import { conexion } from "../db/conexion.js";
 import { SALT_ROUNDS } from "../utilidades/config.js";
+class CustomError extends Error {
+  constructor(type_error, message) {
+    super(message);
+    this.type_error = type_error;
+  }
+}
 export class userModel {
   static async login({ input }) {
     try {
@@ -10,14 +16,16 @@ export class userModel {
       const query = "SELECT * FROM users WHERE username = ?";
 
       const [resultado] = await conexion.query(query, [username]);
-      if (resultado.length === 0) throw new Error("No existe el usuario");
+      if (resultado.length === 0)
+        throw new CustomError("unknow_user", "No existe el usuario");
 
       const validatePassword = await bcrypt.compare(
         password,
         resultado[0].password_hash
       );
 
-      if (!validatePassword) throw new Error("La contraseña no coincide");
+      if (!validatePassword)
+        throw new CustomError("unknow_password", "La contraseña no coincide");
 
       return {
         success: true,
@@ -28,6 +36,7 @@ export class userModel {
       return {
         success: false,
         message: error.message,
+        type_error: error.type_error,
       };
     }
   }
@@ -38,7 +47,10 @@ export class userModel {
         [input.username]
       );
       if (usuarioExistente.length > 0) {
-        throw new Error("El nombre de usuario ya está en uso");
+        throw new CustomError(
+          "userExists",
+          "El nombre de usuario ya está en uso"
+        );
       }
 
       const id = uuidv4();
@@ -67,6 +79,7 @@ export class userModel {
       return {
         success: false,
         error: error.message,
+        type_error: error.type_error,
       };
     }
   }

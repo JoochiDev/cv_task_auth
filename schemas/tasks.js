@@ -6,14 +6,17 @@ const tasksSchema = z.object({
       invalid_type_error: "El título de la tarea debe ser una cadena de texto",
       required_error: "El título de la tarea es requerido",
     })
-    .regex(/^[a-zA-Z0-9]+$/, {
+    .trim({
+      message: "El título de la tarea no puede tener espacios en blanco",
+    })
+    .regex(/^[\p{L}\p{N}\s]+$/u, {
       message: "El título de la tarea no debe contener caracteres especiales",
     })
     .min(4, {
       message: "El titulo de la tarea debe tener al menos 4 caracteres",
     })
-    .max(30, {
-      message: "El titulo de la tarea debe tener como máximo 30 caracteres",
+    .max(60, {
+      message: "El titulo de la tarea debe tener como máximo 60 caracteres",
     }),
   description: z
     .string({
