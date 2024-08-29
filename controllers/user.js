@@ -31,7 +31,7 @@ export class userController {
         httpOnly: true,
         maxAge: 1000 * 60 * 60,
         sameSite: "None",
-        // secure: true,
+        secure: true,
       })
       .json({
         message: resultado.message,
